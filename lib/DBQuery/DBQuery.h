@@ -3,6 +3,7 @@
 
 class DBQuery{
 public:
+  void update(char* data, int dataLen);
 
 private:
 
