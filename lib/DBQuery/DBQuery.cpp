@@ -44,15 +44,14 @@ void DBQuery::storeFile(char* fileName, char* data, int dataLen){
     Serial.printf("invalid data in file %s\n", fileName);
     return;
   }
-
-  //Open file and write to it(Note we will always overwrite the existing file)
-  File file = SPIFFS.open(fileName, FILE_WRITE);
-  if(file){
-    newData.printTo(file);
-    file.close();
-    //After adding this new file update the database
-    load();
+  //Load database out of RAM into JSON object
+  JsonObject& dB = jBuffer.parseObject(dbBuffer);
+  //Iterate through values to see if they exist in database already, if so update, if not add them to the database
+  for(auto kv : newData){
+    dB[kv.key] = kv.value;
   }
+  memset(dbBuffer, 0, sizeof(dbBuffer));
+  dB.printTo(dbBuffer, sizeof(dbBuffer));
 }
 
 //Helper function to read a Spiffs file into a char array
