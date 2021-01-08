@@ -2,7 +2,6 @@
 #include <ArduinoJson.h>
 #include <CloudInterface.h>
 #include <DBQuery.h>
-#include <FileSystem.h>
 #include <HTMLHandler.h>
 #include <SerialHandler.h>
 #include <TCPServer.h>
@@ -10,7 +9,6 @@
 
 Cloud cloud;
 DBQuery dataBase;
-FileSystem fileSystem;
 HTMLHandler htmlHandler;
 SerialHandler serialHandler;
 TCPServer tcpServer;
