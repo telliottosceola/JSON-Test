@@ -7,7 +7,7 @@
 
 class FileSystem{
 public:
-  void init(DBQuery& dbQuery);
+  bool init(DBQuery& dbQuery);
   bool load();
   void storeFile(char* fileName, char* data, int dataLen);
 

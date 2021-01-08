@@ -1,8 +1,12 @@
 #include <FileSystem.h>
 
-void FileSystem::init(DBQuery& dbQuery){
+bool FileSystem::init(DBQuery& dbQuery){
+  if(!SPIFFS.begin()){
+    Serial.println("SPIFFS load failed");
+    return false;
+  }
   _dbQuery = &dbQuery;
-  load();
+  return load();
 }
 
 bool FileSystem::load(){
@@ -54,8 +58,24 @@ bool FileSystem::load(){
   Serial.println("FileSystem Load Failed.");
   return false;
 }
-void FileSystem::storeFile(char* fileName, char* data, int dataLen){
 
+void FileSystem::storeFile(char* fileName, char* data, int dataLen){
+  //Parse data passed in to see if it is valid
+  DynamicJsonBuffer jBuffer;
+  JsonObject& newData = jBuffer.parseObject(data);
+  if(!newData.success()){
+    Serial.printf("invalid data in file %s\n", fileName);
+    return;
+  }
+
+  //Open file and write to it(Note we will always overwrite the existing file)
+  File file = SPIFFS.open(fileName, FILE_WRITE);
+  if(file){
+    newData.printTo(file);
+    file.close();
+    //After adding this new file update the database
+    load();
+  }
 }
 
 //Helper function to read a Spiffs file into a char array
